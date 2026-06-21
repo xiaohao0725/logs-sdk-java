@@ -1,4 +1,4 @@
-package com.codexs.logs.sdk;
+package io.github.xiaohao0725.logs.sdk;
 
 import java.util.ArrayList;
 import java.util.List;

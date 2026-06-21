@@ -1,4 +1,4 @@
-package com.codexs.logs.sdk;
+package io.github.xiaohao0725.logs.sdk;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;

@@ -1,4 +1,4 @@
-package com.codexs.logs.sdk;
+package io.github.xiaohao0725.logs.sdk;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
