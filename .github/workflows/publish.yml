@@ -21,9 +21,22 @@ jobs:
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
+      - name: Set up Maven settings
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << 'EOF'
+          <settings>
+            <servers>
+              <server>
+                <id>central</id>
+                <username>VaAJ9q</username>
+                <password>ZUyojFqA4rQljg4tDWgIxbs9mD3aB4Z3E</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+
       - name: Deploy to Maven Central
         run: mvn deploy -P release --batch-mode -Dstyle.color=always
         env:
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
