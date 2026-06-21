@@ -139,7 +139,10 @@ public class LoggingFilter implements Filter {
         public byte[] getBody() { return body.toByteArray(); }
         public int getStatus() { return status; }
         @Override public void setStatus(int status) { this.status = status; super.setStatus(status); }
-        @Override public ServletOutputStream getOutputStream() { return new TeeServletOutputStream(super.getOutputStream(), body); }
+        @Override public ServletOutputStream getOutputStream() {
+            try { return new TeeServletOutputStream(super.getOutputStream(), body); }
+            catch (IOException e) { throw new RuntimeException(e); }
+        }
         @Override public PrintWriter getWriter() { return new PrintWriter(new OutputStreamWriter(getOutputStream())); }
     }
 
