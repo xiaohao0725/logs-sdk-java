@@ -16,14 +16,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Import GPG key & upload to keyserver
+      - name: Import GPG key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-          echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
-          FINGERPRINT=$(gpg --list-secret-keys --keyid-format LONG | grep sec | sed 's/.*\///' | awk '{print $1}')
-          echo "Fingerprint: $FINGERPRINT"
-          gpg --keyserver keyserver.ubuntu.com --send-keys $FINGERPRINT
-          gpg --keyserver keys.openpgp.org --send-keys $FINGERPRINT
+          gpg --list-secret-keys --keyid-format LONG
 
       - name: Set up Maven settings
         run: |
