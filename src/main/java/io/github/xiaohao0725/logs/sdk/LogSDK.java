@@ -57,7 +57,9 @@ public class LogSDK {
             try { sendBatch(remaining); }
             catch (Exception e) { offlineCache.save(remaining); }
         }
-        offlineCache.flushAll(this::sendBatch);
+        offlineCache.flushAll(entries -> {
+            try { sendBatch(entries); } catch (Exception e) { /* offline retry fail */ }
+        });
     }
 
     private void flushEntries(List<LogEntry> entries) {
@@ -76,7 +78,7 @@ public class LogSDK {
         }
     }
 
-    private void sendBatch(List<LogEntry> entries) throws Exception {
+    private void sendBatch(List<LogEntry> entries) {
         Map<String, Object> body = new HashMap<>();
         body.put("logs", entries);
         String json = mapper.writeValueAsString(body);
@@ -91,7 +93,7 @@ public class LogSDK {
                 .build();
         HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
         if (resp.statusCode() != 200 && resp.statusCode() != 201) {
-            throw new Exception("服务端返回 " + resp.statusCode());
+            throw new RuntimeException("服务端返回 " + resp.statusCode());
         }
     }
 
