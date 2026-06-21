@@ -79,21 +79,25 @@ public class LogSDK {
     }
 
     private void sendBatch(List<LogEntry> entries) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("logs", entries);
-        String json = mapper.writeValueAsString(body);
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(config.endpoint))
-                .header("Content-Type", "application/json")
-                .header("X-API-Key", config.apiKey)
-                .header("X-SDK-Type", "java")
-                .header("X-SDK-Version", "0.3.0")
-                .timeout(Duration.ofSeconds(15))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
-        if (resp.statusCode() != 200 && resp.statusCode() != 201) {
-            throw new RuntimeException("服务端返回 " + resp.statusCode());
+        try {
+            Map<String, Object> body = new HashMap<>();
+            body.put("logs", entries);
+            String json = mapper.writeValueAsString(body);
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(config.endpoint))
+                    .header("Content-Type", "application/json")
+                    .header("X-API-Key", config.apiKey)
+                    .header("X-SDK-Type", "java")
+                    .header("X-SDK-Version", "0.3.0")
+                    .timeout(Duration.ofSeconds(15))
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() != 200 && resp.statusCode() != 201) {
+                throw new RuntimeException("服务端返回 " + resp.statusCode());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("HTTP请求失败: " + e.getMessage(), e);
         }
     }
 
