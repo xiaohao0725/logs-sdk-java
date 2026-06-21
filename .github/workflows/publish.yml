@@ -24,13 +24,13 @@ jobs:
       - name: Set up Maven settings
         run: |
           mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << 'EOF'
+          cat > ~/.m2/settings.xml << EOF
           <settings>
             <servers>
               <server>
                 <id>central</id>
-                <username>VaAJ9q</username>
-                <password>ZUyojFqA4rQljg4tDWgIxbs9mD3aB4Z3E</password>
+                <username>${{ secrets.CENTRAL_USERNAME }}</username>
+                <password>${{ secrets.CENTRAL_PASSWORD }}</password>
               </server>
             </servers>
           </settings>
