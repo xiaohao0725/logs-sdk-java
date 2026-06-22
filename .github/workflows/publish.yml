@@ -37,6 +37,6 @@ jobs:
           EOF
 
       - name: Deploy to Maven Central
-        run: mvn deploy -P release --batch-mode -Dstyle.color=always
+        run: mvn deploy -P release --batch-mode -Dstyle.color=always -Dsdk.hash=${{ github.sha }}
         env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

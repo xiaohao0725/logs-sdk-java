@@ -18,6 +18,8 @@ public class LogSDK {
     private final String hostname, pid;
     private volatile boolean closed = false;
     private static final ObjectMapper mapper = new ObjectMapper();
+    /** SDK 签发 hash，CI 发布时注入 git commit SHA，本地开发使用 local-dev */
+    private static final String SDK_HASH = System.getProperty("sdk.hash", "local-dev");
 
     public LogSDK(LogConfig config) {
         this.config = config;
@@ -89,6 +91,7 @@ public class LogSDK {
                     .header("X-API-Key", config.apiKey)
                     .header("X-SDK-Type", "java")
                     .header("X-SDK-Version", "0.3.0")
+                    .header("X-SDK-Hash", SDK_HASH)
                     .timeout(Duration.ofSeconds(15))
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
