@@ -38,6 +38,9 @@ jobs:
           </settings>
           EOF
 
+      - name: Sync version from tag
+        run: sed -i "0,/<version>[0-9].*<\/version>/s/<version>[0-9].*<\/version>/<version>${GITHUB_REF#refs/tags/v}<\/version>/" pom.xml
+
       - name: Deploy to Maven Central
         run: mvn deploy -P release --batch-mode -Dstyle.color=always -Dsdk.hash=${{ github.sha }}
         env:
