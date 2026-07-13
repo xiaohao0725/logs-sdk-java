@@ -51,6 +51,43 @@ public class LogSDK {
     }
 
     /** 优雅关闭 */
+
+    /** Upload infrastructure logs */
+    public void uploadInfraLogs(java.util.List<InfraLogEntry> entries) {
+        if (entries == null || entries.isEmpty()) return;
+        String infraEndpoint = config.endpoint.replace("/logs", "/infra-logs");
+        for (InfraLogEntry e : entries) {
+            if (e.projectSlug == null) e.projectSlug = config.projectSlug;
+            if (e.host == null) e.host = hostname;
+            if (e.timestamp == null) e.timestamp = java.time.Instant.now().toString();
+        }
+        try {
+            java.util.Map<String, Object> body = new java.util.HashMap<>();
+            body.put("logs", entries);
+            String json = mapper.writeValueAsString(body);
+            java.net.http.HttpRequest req = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create(infraEndpoint))
+                    .header("Content-Type", "application/json")
+                    .header("X-API-Key", config.apiKey)
+                    .header("X-SDK-Type", "java")
+                    .header("X-SDK-Version", "0.3.0")
+                    .timeout(java.time.Duration.ofSeconds(15))
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            java.net.http.HttpResponse<String> resp = httpClient.send(req, java.net.http.HttpResponse.BodyHandlers.ofString());
+            if (resp.statusCode() != 200 && resp.statusCode() != 201) {
+                System.err.println("[logs-sdk] Infra upload failed: " + resp.statusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("[logs-sdk] Infra upload error: " + e.getMessage());
+        }
+    }
+
+    /** Upload a single infrastructure log entry */
+    public void uploadInfraLog(InfraLogEntry entry) {
+        uploadInfraLogs(java.util.Collections.singletonList(entry));
+    }
+
     public void close() {
         closed = true;
         scheduler.shutdown();
