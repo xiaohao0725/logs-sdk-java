@@ -65,7 +65,7 @@ public class LoggingFilter implements Filter {
             entry.responseHeaders = sanitizeHeaders(wrappedRes);
             entry.responseBodySize = wrappedRes.getBody().length;
             entry.responseBody = new String(wrappedRes.getBody(), 0, Math.min(wrappedRes.getBody().length, sdk.config.maxBodySize));
-            if (entry.statusCode >= 500) { entry.isError = true; entry.errorType = "http_error"; }
+            if (entry.statusCode >= 400) { entry.isError = true; entry.errorType = "http_error"; entry.errorMessage = entry.responseBody; }
             sdk.send(entry);
         }
     }
