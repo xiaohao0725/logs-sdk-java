@@ -66,6 +66,7 @@ public class LoggingFilter implements Filter {
             entry.responseBodySize = wrappedRes.getBody().length;
             entry.responseBody = new String(wrappedRes.getBody(), 0, Math.min(wrappedRes.getBody().length, sdk.config.maxBodySize));
             if (entry.statusCode >= 400) { entry.isError = true; entry.errorType = "http_error"; entry.errorMessage = entry.responseBody; }
+            if (entry.statusCode >= 500) { entry.errorStack = getStackTrace(); }
             sdk.send(entry);
         }
     }
@@ -162,5 +163,14 @@ public class LoggingFilter implements Filter {
         @Override public void write(int b) throws IOException { original.write(b); copy.write(b); }
         @Override public boolean isReady() { return true; }
         @Override public void setWriteListener(jakarta.servlet.WriteListener l) {}
+    }
+
+    private static String getStackTrace() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement e : stack) {
+            sb.append(e.toString()).append("\n");
+        }
+        return sb.toString();
     }
 }
