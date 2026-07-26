@@ -118,7 +118,11 @@ public class LogSDK {
         }
     }
 
-    private void sendBatch(List<LogEntry> entries) {
+    /**
+     * HTTP POST 批量发送日志 — ★ 增强：解析服务端响应体返回 IngestResponse。
+     * 调用方可从返回值中获取 batch_id 和 UUID 列表用于追踪日志处理状态。
+     */
+    private IngestResponse sendBatch(List<LogEntry> entries) {
         try {
             Map<String, Object> body = new HashMap<>();
             body.put("logs", entries);
@@ -138,6 +142,22 @@ public class LogSDK {
             if (resp.statusCode() != 200 && resp.statusCode() != 201) {
                 throw new RuntimeException("服务端返回 " + resp.statusCode());
             }
+            // ★ 解析服务端 JSON 响应体，提取 UUID 列表和 batch_id
+            @SuppressWarnings("unchecked")
+            Map<String, Object> apiResp = mapper.readValue(resp.body(), Map.class);
+            if (apiResp != null && apiResp.containsKey("data")) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> data = (Map<String, Object>) apiResp.get("data");
+                if (data != null) {
+                    int received = data.containsKey("received") ? ((Number) data.get("received")).intValue() : entries.size();
+                    @SuppressWarnings("unchecked")
+                    List<String> uuids = (List<String>) data.get("uuids");
+                    String batchId = data.containsKey("batch_id") ? (String) data.get("batch_id") : "";
+                    return new IngestResponse(received, uuids != null ? uuids : new ArrayList<>(), batchId);
+                }
+            }
+            // 响应体无法解析（旧版服务端），回退
+            return new IngestResponse(entries.size(), new ArrayList<>(), "");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("HTTP请求失败: " + e.getMessage(), e);
         }
