@@ -63,6 +63,7 @@ public class LogEntry {
     @JsonProperty("user_id")         public String userId;
     @JsonProperty("session_id")      public String sessionId;
     @JsonProperty("is_error")        public boolean isError;
+    @JsonProperty("is_callback")     public boolean isCallback;
     @JsonProperty("error_message")   public String errorMessage;
     @JsonProperty("error_type")      public String errorType;
     @JsonProperty("error_stack")     public String errorStack;

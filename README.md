@@ -25,14 +25,14 @@
 <dependency>
   <groupId>com.codexs</groupId>
   <artifactId>logs-sdk-java</artifactId>
-  <version>0.3.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```gradle
-implementation 'com.codexs:logs-sdk-java:0.3.0'
+implementation 'com.codexs:logs-sdk-java:0.6.0'
 ```
 
 要求 JDK 17+，Jakarta Servlet 6.1+。
