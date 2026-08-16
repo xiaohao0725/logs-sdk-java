@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.xiaohao0725</groupId>
     <artifactId>logs-sdk-java</artifactId>
-    <version>0.5.0.1</version>
+    <version>0.6.0</version>
     <packaging>jar</packaging>
     <name>logs-sdk-java</name>
     <description>Log Management Platform Java SDK — Spring Boot / Servlet Filter middleware for automatic HTTP request log collection</description>
@@ -102,6 +102,8 @@
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
+                            <!-- 验证通过后自动发布，避免每次打 tag 还需到 Sonatype Central 手动点击 Publish -->
+                            <autoPublish>true</autoPublish>
                         </configuration>
                     </plugin>
                 </plugins>

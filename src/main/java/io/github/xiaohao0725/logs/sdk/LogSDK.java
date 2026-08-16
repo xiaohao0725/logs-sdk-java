@@ -58,6 +58,7 @@ public class LogSDK {
         String infraEndpoint = config.endpoint.replace("/logs", "/infra-logs");
         for (InfraLogEntry e : entries) {
             if (e.projectSlug == null) e.projectSlug = config.projectSlug;
+            if (e.uuid == null || e.uuid.isEmpty()) e.uuid = UUID.randomUUID().toString().replace("-", "");
             if (e.host == null) e.host = hostname;
             if (e.timestamp == null) e.timestamp = java.time.Instant.now().toString();
         }
@@ -71,7 +72,8 @@ public class LogSDK {
                     .header("X-API-Key", config.apiKey)
                     .header("X-API-Secret", config.apiSecret)
                     .header("X-SDK-Type", "java")
-                    .header("X-SDK-Version", "0.3.0")
+                    .header("X-SDK-Version", "0.6.0")
+                    .header("X-SDK-Hash", SDK_HASH)
                     .timeout(java.time.Duration.ofSeconds(15))
                     .POST(java.net.http.HttpRequest.BodyPublishers.ofString(json))
                     .build();
@@ -133,7 +135,7 @@ public class LogSDK {
                     .header("X-API-Key", config.apiKey)
                     .header("X-API-Secret", config.apiSecret)
                     .header("X-SDK-Type", "java")
-                    .header("X-SDK-Version", "0.3.0")
+                    .header("X-SDK-Version", "0.6.0")
                     .header("X-SDK-Hash", SDK_HASH)
                     .timeout(Duration.ofSeconds(15))
                     .POST(HttpRequest.BodyPublishers.ofString(json))

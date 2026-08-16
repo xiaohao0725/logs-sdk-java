@@ -48,6 +48,7 @@ public class LoggingFilter implements Filter {
         entry.userId = request.getHeader("X-User-ID") != null ? request.getHeader("X-User-ID") : "";
         entry.sessionId = request.getSession(false) != null ? request.getSession(false).getId() : "";
         entry.proto = request.getProtocol();
+        entry.isCallback = isCallbackRequest(request);
 
         try {
             chain.doFilter(wrappedReq, wrappedRes);
@@ -69,6 +70,13 @@ public class LoggingFilter implements Filter {
             if (entry.statusCode >= 500) { entry.errorStack = getStackTrace(); }
             sdk.send(entry);
         }
+    }
+
+    /** 判断请求是否由平台回调通知触发（X-Logs-Event 头或 logs-server-callback/ UA） */
+    private boolean isCallbackRequest(HttpServletRequest req) {
+        if (req.getHeader("X-Logs-Event") != null) return true;
+        String ua = req.getHeader("User-Agent");
+        return ua != null && ua.startsWith("logs-server-callback/");
     }
 
     private String detectClientType(HttpServletRequest req) {

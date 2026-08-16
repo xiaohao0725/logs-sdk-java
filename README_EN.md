@@ -22,7 +22,7 @@
 <dependency>
   <groupId>com.codexs</groupId>
   <artifactId>logs-sdk-java</artifactId>
-  <version>0.3.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
